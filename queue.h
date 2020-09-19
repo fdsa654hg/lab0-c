@@ -29,6 +29,7 @@ typedef struct {
      *        to efficiently implement q_size and q_insert_tail.
      */
     /* TODO: Remove the above comment when you are about to implement. */
+    list_ele_t *tail;
     int size;
 } queue_t;
 
@@ -95,5 +96,7 @@ void q_reverse(queue_t *q);
  * element, do nothing.
  */
 void q_sort(queue_t *q);
+
+void merge_sort(list_ele_t **q);
 
 #endif /* LAB0_QUEUE_H */
