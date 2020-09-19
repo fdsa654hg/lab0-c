@@ -28,13 +28,13 @@ void q_free(queue_t *q)
     if (!q)
         return;
 
-    list_ele_t *tmp = q->head;
+    list_ele_t *cur = q->head;
     while (q->head) {
         q->head = q->head->next;
-        tmp->next = NULL;
-        free(tmp->value);
-        free(tmp);
-        tmp = q->head;
+        cur->next = NULL;
+        free(cur->value);
+        free(cur);
+        cur = q->head;
     }
 
     free(q);
@@ -53,22 +53,22 @@ bool q_insert_head(queue_t *q, char *s)
     if (!q)
         return false;
 
-    list_ele_t *newh;
-    newh = malloc(sizeof(list_ele_t));
-    if (!newh)
+    list_ele_t *new_head;
+    new_head = malloc(sizeof(list_ele_t));
+    if (!new_head)
         return false;
 
-    newh->value = malloc(sizeof(char) * (strlen(s) + 1));
-    if (!newh->value) {
-        free(newh);
+    new_head->value = malloc(sizeof(char) * (strlen(s) + 1));
+    if (!new_head->value) {
+        free(new_head);
         return false;
     }
 
     q->size += 1;
 
-    snprintf(newh->value, (size_t) strlen(s) + 1, "%s", s);
-    newh->next = q->head;
-    q->head = newh;
+    snprintf(new_head->value, (size_t) strlen(s) + 1, "%s", s);
+    new_head->next = q->head;
+    q->head = new_head;
 
     if (!q->tail) {
         list_ele_t **tmp = &q->head;
@@ -94,28 +94,28 @@ bool q_insert_tail(queue_t *q, char *s)
     if (!q)
         return false;
 
-    list_ele_t *newt;
-    newt = malloc(sizeof(list_ele_t));
-    if (!newt)
+    list_ele_t *new_tail;
+    new_tail = malloc(sizeof(list_ele_t));
+    if (!new_tail)
         return false;
 
-    newt->value = malloc(sizeof(char) * (strlen(s) + 1));
-    if (!newt->value) {
-        free(newt);
+    new_tail->value = malloc(sizeof(char) * (strlen(s) + 1));
+    if (!new_tail->value) {
+        free(new_tail);
         return false;
     }
 
     q->size += 1;
 
-    snprintf(newt->value, (size_t) strlen(s) + 1, "%s", s);
+    snprintf(new_tail->value, (size_t) strlen(s) + 1, "%s", s);
     if (!q->tail) {
-        q->tail = q->head = newt;
+        q->tail = q->head = new_tail;
         q->tail->next = q->head->next = NULL;
         return true;
     }
 
-    q->tail->next = newt;
-    q->tail = newt;
+    q->tail->next = new_tail;
+    q->tail = new_tail;
     q->tail->next = NULL;
 
     return true;
@@ -173,18 +173,18 @@ void q_reverse(queue_t *q)
     if (!q || !q->head)
         return;
 
-    list_ele_t *old_head = q->head, *old_tail = q->tail;
-    list_ele_t *prev = q->head, *next, *indiretion = q->head->next;
+    list_ele_t *old_head = q->head;
+    list_ele_t *prev = q->head, *next, *cur = q->head->next;
     q->head->next = NULL;
 
-    while (indiretion) {
-        next = indiretion->next;
-        indiretion->next = prev;
-        prev = indiretion;
-        indiretion = next;
+    while (cur) {
+        next = cur->next;
+        cur->next = prev;
+        prev = cur;
+        cur = next;
     }
 
-    q->head = old_tail;
+    q->head = prev;
     q->tail = old_head;
 }
 
@@ -235,5 +235,8 @@ void merge_sort(list_ele_t **head)
         tmp = &((*tmp)->next);
     }
 
-    *tmp = l1 ? l1 : l2;
+    if (l1)
+        *tmp = l1;
+    else
+        *tmp = l2;
 }
